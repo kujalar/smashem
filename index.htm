@@ -11,12 +11,34 @@
     <div id="root"></div>
 
     <script type="text/babel">
+
+
+      class SmashemApp extends React.Component {
+        constructor(props) {
+          super(props);
+        }
+        render() {
+          return (
+            <div>
+              <img className="Avatar"
+                src={'pic/tuntematon.png'}
+                alt={'tuntematon'}
+                height="64"
+                width="64"
+                />
+              <div className="NameLabel" >Tuntematon</div>
+            </div>
+          );
+        }
+      }
+
       ReactDOM.render(
         <div>
           <h1>Smash them.</h1>
-          </div>,
-          document.getElementById('root')
-        );
+          <SmashemApp/>
+        </div>,
+        document.getElementById('root')
+      );
     </script>
   </body>
 </html>
