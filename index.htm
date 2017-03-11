@@ -12,21 +12,55 @@
 
     <script type="text/babel">
 
-
-      class SmashemApp extends React.Component {
+      const divStyle = {
+        float: 'left'
+      };
+      class Character extends React.Component {
         constructor(props) {
           super(props);
         }
         render() {
+          const character = this.props.data;
+          const name = character.name;
+          const avatar = character.avatar;
+          return (
+
+            <div>
+              <div >
+                <div className="NameLabel" >{name}</div>
+                <img className="Avatar"
+                  src={avatar}
+                  alt={name}
+                  height="64"
+                  width="64"/>
+                <div>HP 10/10</div>
+              </div>
+              <div >
+                <div style={divStyle} >AC 10 (unarmored)</div>
+                <div>Sword +1</div>
+              </div>
+            </div>
+          );
+        }
+      }
+
+      class SmashemApp extends React.Component {
+
+        constructor(props) {
+          super(props);
+          const avatari = {
+            id: 1,
+            name: 'Tuntematon',
+            avatar: 'pic/tuntematon.png'
+          };
+          this.state = {
+            avatar: avatari
+          };
+        }
+        render() {
           return (
             <div>
-              <img className="Avatar"
-                src={'pic/tuntematon.png'}
-                alt={'tuntematon'}
-                height="64"
-                width="64"
-                />
-              <div className="NameLabel" >Tuntematon</div>
+              <Character data={this.state.avatar} />
             </div>
           );
         }
