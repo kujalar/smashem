@@ -6,15 +6,16 @@
     <script src="https://unpkg.com/react@latest/dist/react.js"></script>
     <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style>
+
+    </style>
   </head>
   <body>
     <div id="root"></div>
 
     <script type="text/babel">
 
-      const divStyle = {
-        float: 'left'
-      };
+
       class Character extends React.Component {
         constructor(props) {
           super(props);
@@ -23,22 +24,52 @@
           const character = this.props.data;
           const name = character.name;
           const avatar = character.avatar;
+
+          const characterCardStyle = {
+            borderStyle: 'solid',
+            borderWidth: '1px 0px 1px 7px',
+            borderColor: '#1e90ff #1e90ff',
+            overflow: 'hidden',
+            backgroundColor: '#fff8dc'
+          };
+          const columnStyle = {
+            float: 'left',
+            paddingLeft: 5,
+            paddingTop: 2
+          };
+          const newLineStyle = {
+            clear: 'left',
+            paddingLeft: 5,
+            paddingTop: 2
+          }
           return (
 
-            <div>
-              <div >
+            <div style={characterCardStyle}>
+              <div style={columnStyle}>
                 <div className="NameLabel" >{name}</div>
                 <img className="Avatar"
                   src={avatar}
                   alt={name}
                   height="64"
                   width="64"/>
-                <div>HP 10/10</div>
               </div>
-              <div >
-                <div style={divStyle} >AC 10 (unarmored)</div>
-                <div>Sword +1</div>
+              <div style={columnStyle} >
+                <div>&nbsp;</div>
+                <div >AC 13 (Hide armor)</div>
+                <div >HP 15 (2d8+6)</div>
+                <div >Speed 30&prime;</div>
               </div>
+              <div style={columnStyle} >
+                <div>Actions</div>
+                <div>Greataxe.</div>
+                <div>Javelin.</div>
+              </div>
+              <div style={columnStyle} >
+                <div>Bonus Actions</div>
+                <div>Aggressive.</div>
+              </div>
+
+              <div style={newLineStyle}>STR 16, DEX 12, CON 16, INT 7, WIS 11, CHA 10</div>
             </div>
           );
         }
@@ -50,7 +81,7 @@
           super(props);
           const avatari = {
             id: 1,
-            name: 'Tuntematon',
+            name: 'Orc',
             avatar: 'pic/tuntematon.png'
           };
           this.state = {
