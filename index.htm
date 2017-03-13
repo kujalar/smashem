@@ -19,6 +19,10 @@
       class Character extends React.Component {
         constructor(props) {
           super(props);
+          this.handleChooseAction = this.handleChooseAction.bind(this);
+        }
+        handleChooseAction(){
+          this.props.onClickChooseAction(this.props.data);
         }
         render() {
           const character = this.props.data;
@@ -61,8 +65,9 @@
               </div>
               <div style={columnStyle} >
                 <div>Actions</div>
-                <div>Greataxe.</div>
-                <div>Javelin.</div>
+                <input type="submit" value="Greataxe" onClick={this.handleChooseAction} />
+                <div onClick={this.handleChooseAction} >Greataxe.</div>
+                <div onClick={this.handleChooseAction} >Javelin.</div>
               </div>
               <div style={columnStyle} >
                 <div>Bonus Actions</div>
@@ -79,19 +84,33 @@
 
         constructor(props) {
           super(props);
-          const avatari = {
+          var orc1 = {
             id: 1,
-            name: 'Orc',
+            name: 'Orc-1',
             avatar: 'pic/tuntematon.png'
           };
+          var orc2 = {
+            id: 2,
+            name: 'Orc-2',
+            avatar: 'pic/tuntematon.png'
+          }
+          var orcs = [orc1, orc2];
           this.state = {
-            avatar: avatari
+            characters: orcs
           };
+          this.handleChooseAction = this.handleChooseAction.bind(this);
         }
+        handleChooseAction(character,action){
+          console.log(character.name+' chose action '+action);
+        }
+
         render() {
+          const characterElements = this.state.characters.map((character) =>
+            <Character key={character.id} data={character} onClickChooseAction={this.handleChooseAction} />
+          );
           return (
             <div>
-              <Character data={this.state.avatar} />
+              {characterElements}
             </div>
           );
         }
