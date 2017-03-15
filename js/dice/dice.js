@@ -13,13 +13,10 @@ var dice = {  //namespace dice
       if(!isNaN(char)) {
         number = char.concat(number);
       } else if(char=='+'||char=='-') {
-        var diceRoll = 0;
+
         if(dice!=''){
-          for(j=0;j<number;j++){
-            diceRoll += getRandomInt(1,dice);
-          }
+          number = sumMultiRandomInt(number,1,dice);
           dice = '';
-          number = diceRoll;
         }
         if(char=='-'){
           number *= -1;
@@ -35,11 +32,7 @@ var dice = {  //namespace dice
           if(number==''){
             number = 1;
           }
-          var diceRoll = 0;
-          for(j=0;j<number;j++){
-            diceRoll += getRandomInt(1,dice);
-          }
-          number = diceRoll;
+          number = sumMultiRandomInt(number,1,dice);
         }
         if(number!=''){
           sum += Number(number);
@@ -49,8 +42,14 @@ var dice = {  //namespace dice
     return sum;
   }
 };
-
-
+//returns sum of times random integers between min (included) and max (included)
+function sumMultiRandomInt(times,min,max) {
+  var sum = 0;
+  for(j=0;j<times;j++){
+    sum += getRandomInt(min,max);
+  }
+  return sum;
+}
 
 // Returns a random integer between min (included) and max (included)
 function getRandomInt(min, max) {
