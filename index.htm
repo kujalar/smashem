@@ -114,10 +114,13 @@
           const characterElements = this.state.characters.map((character) =>
             <Character key={character.id} data={character} onClickChooseAction={this.handleChooseAction} />
           );
-          const roll = d20();
+          const roll = dice.d20();
+          const roll2String = '1d8+1';
+          const roll2 = dice.roll(roll2String);
           return (
             <div>
               <div>d20={roll}</div>
+              <div>{roll2String}={roll2}</div>
               {characterElements}
             </div>
           );
