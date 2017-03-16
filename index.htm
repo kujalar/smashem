@@ -16,14 +16,29 @@
 
     <script type="text/babel">
 
-
       class Character extends React.Component {
         constructor(props) {
           super(props);
           this.handleChooseAction = this.handleChooseAction.bind(this);
+          this.handleSelectCharacter = this.handleSelectCharacter.bind(this);
+          this.toggleHover = this.toggleHover.bind(this);
+          this.state = {hover: false};
         }
+
         handleChooseAction(){
           this.props.onClickChooseAction(this.props.data);
+        }
+        handleSelectCharacter(){
+          this.props.onSelectCharacter(this.props.data);
+        }
+        toggleHover(event) {
+          console.log("togglehover "+event.type);
+          if(event.type=='mouseenter') {
+            this.setState({hover: true});
+          } else {
+            this.setState({hover: false});
+          }
+        /*  */
         }
         render() {
           const character = this.props.data;
@@ -39,7 +54,8 @@
           };
           const columnStyle = {
             float: 'left',
-            paddingLeft: 5,
+            paddingLeft: 3,
+            paddingRight: 3,
             paddingTop: 2
           };
           const newLineStyle = {
@@ -47,10 +63,26 @@
             paddingLeft: 5,
             paddingTop: 2
           }
+          const columnHoverStyle = {
+            float: 'left',
+            paddingLeft: 3,
+            paddingRight: 3,
+            paddingTop: 2,
+            backgroundColor: '#ff0000'
+          }
+          var avatarColStyle;
+          if(this.state.hover==true){
+            avatarColStyle = columnHoverStyle;
+            //avatarColStyle.backgroundColor = '#ff0000';
+          } else {
+            avatarColStyle = columnStyle;
+          }
           return (
 
             <div style={characterCardStyle}>
-              <div style={columnStyle}>
+              <div style={avatarColStyle} onClick={this.handleSelectCharacter}
+                onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover}
+                >
                 <div className="NameLabel" >{name}</div>
                 <img className="Avatar"
                   src={avatar}
@@ -105,14 +137,20 @@
             characters: orcs
           };
           this.handleChooseAction = this.handleChooseAction.bind(this);
+          this.handleSelectCharacter = this.handleSelectCharacter.bind(this);
         }
         handleChooseAction(character,action){
           console.log(character.name+' chose action '+action);
         }
+        handleSelectCharacter(character){
+          console.log("selected "+character.name);
+        }
 
         render() {
           const characterElements = this.state.characters.map((character) =>
-            <Character key={character.id} data={character} onClickChooseAction={this.handleChooseAction} />
+            <Character key={character.id} data={character} onClickChooseAction={this.handleChooseAction}
+              onSelectCharacter={this.handleSelectCharacter}
+            />
           );
           const roll = dice.d20();
           const roll2String = '1d8+1';
