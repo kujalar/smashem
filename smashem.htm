@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <title>Smash'em - do not show mercy.</title>
     <script src="https://unpkg.com/vue"></script>
-    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
     <style>
     </style>
   </head>
@@ -13,11 +12,7 @@
         <charactercard v-for="item in characterList" v-bind:character="item" :key="item.id">
         </charactercard>
     </div>
-    <script type="text/babel">
-    function charactercardTemplate() {
-      return (<div>Kaikki toimii
-              </div>);
-    }
+    <script>
       Vue.component('charactercard',{
         props: ['character'] ,
         template:
@@ -33,13 +28,15 @@
           props: ['action'],
           template: '<div>{{action.name}}</div>'
       })
+      var orcActionList = [{name: 'Greataxe'},{name: 'Javelin'}];
+      var expexterActionList = [{name: 'Attack'}];
       var SmashemApp = new Vue({
         el: '#smashemApp',
         data: {
           characterList: [
-            { id: 1,name: 'Orc-1', avatar: 'pic/tuntematon.png',actionList: [{name: 'Greataxe'},{name: 'Javelin'}]},
-            { id: 2,name: 'Orc-2', avatar: 'pic/tuntematon.png',actionList: [{name: 'Greataxe'},{name: 'Javelin'}]},
-            { id: 3,name: 'Expexter', avatar: 'pic/platewarrior.png',actionList: [{name: 'Greataxe'},{name: 'Javelin'}]}
+            { id: 1,name: 'Orc-1', avatar: 'pic/tuntematon.png',actionList: orcActionList},
+            { id: 2,name: 'Orc-2', avatar: 'pic/tuntematon.png',actionList: orcActionList},
+            { id: 3,name: 'Expexter', avatar: 'pic/platewarrior.png',actionList: expexterActionList}
           ]
         }
       })
