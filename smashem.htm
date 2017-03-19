@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Smash'em - do not show mercy.</title>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style>
+    </style>
+  </head>
+  <body>
+    <div id="smashemApp">
+        <charactercard v-for="item in characterList" v-bind:character="item" :key="item.id">
+        </charactercard>
+    </div>
+    <script type="text/babel">
+    function charactercardTemplate() {
+      return (<div>Kaikki toimii
+              </div>);
+    }
+      Vue.component('charactercard',{
+        props: ['character'] ,
+        template:
+        '<div>'+
+          '<div style="float: left"><div className="NameLabel" >{{character.name}}</div>'+
+          '<img className="Avatar" :src="character.avatar" height="64" width="64"/></div>'+
+          '<div style="float: left"><div>Actions</div>'+
+          '<characteraction v-for="item in character.actionList" v-bind:action="item"></characteraction></div>'+
+          '<div style="clear: left"></div>'+
+        '</div>'
+      })
+      Vue.component('characteraction',{
+          props: ['action'],
+          template: '<div>{{action.name}}</div>'
+      })
+      var SmashemApp = new Vue({
+        el: '#smashemApp',
+        data: {
+          characterList: [
+            { id: 1,name: 'Orc-1', avatar: 'pic/tuntematon.png',actionList: [{name: 'Greataxe'},{name: 'Javelin'}]},
+            { id: 2,name: 'Orc-2', avatar: 'pic/tuntematon.png',actionList: [{name: 'Greataxe'},{name: 'Javelin'}]},
+            { id: 3,name: 'Expexter', avatar: 'pic/platewarrior.png',actionList: [{name: 'Greataxe'},{name: 'Javelin'}]}
+          ]
+        }
+      })
+
+    </script>
+  </body>
+</html>
