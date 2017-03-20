@@ -9,25 +9,31 @@
   </head>
   <body>
     <div id="smashemApp">
-        <charactercard v-for="item in characterList" v-bind:character="item" :key="item.id">
+        <charactercard v-for="item in characterList" v-bind:character="item" :key="item.id" v-bind:onselectaction="handleselectaction">
         </charactercard>
     </div>
     <script>
       Vue.component('charactercard',{
-        props: ['character'] ,
+        props: ['character','onselectaction'] ,
         template:
         '<div>'+
           '<div style="float: left"><div className="NameLabel" >{{character.name}}</div>'+
           '<img className="Avatar" :src="character.avatar" height="64" width="64"/></div>'+
           '<div style="float: left"><div>Actions</div>'+
-          '<characteraction v-for="item in character.actionList" v-bind:action="item"></characteraction></div>'+
+          '<characteraction v-for="item in character.actionList" v-bind:action="item" v-bind:character="character" v-bind:onselectaction="onselectaction"></characteraction></div>'+
           '<div style="clear: left"></div>'+
         '</div>'
       })
       Vue.component('characteraction',{
-          props: ['action'],
-          template: '<div>{{action.name}}</div>'
+          props: ['action','character','onselectaction'],
+          methods: {
+            selectAction: function(actionName,characterName) {
+              console.log(characterName+" doing action "+actionName);
+            }
+          },
+          template: '<div><div v-on:click="onselectaction(character,action)">{{action.name}}</div></div>'
       })
+
       var orcActionList = [{name: 'Greataxe'},{name: 'Javelin'}];
       var expexterActionList = [{name: 'Attack'}];
       var SmashemApp = new Vue({
@@ -38,6 +44,12 @@
             { id: 2,name: 'Orc-2', avatar: 'pic/tuntematon.png',actionList: orcActionList},
             { id: 3,name: 'Expexter', avatar: 'pic/platewarrior.png',actionList: expexterActionList}
           ]
+        },
+        methods: {
+          handleselectaction: function(character,action){
+            console.log(character.name+" is going to use "+action.name);
+            character.name = character.name+'+';
+          }
         }
       })
 
