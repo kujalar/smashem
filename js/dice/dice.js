@@ -1,10 +1,9 @@
 var dice = {  //namespace dice
+  debugLog: false,
   d20: function(){
     return getRandomInt(1,20);
   },
   roll: function(diceString) {
-    var result = "roll "+diceString;
-
     var number = '';
     var dice = '';
     var sum = 0;
@@ -54,6 +53,6 @@ function sumMultiRandomInt(times,min,max) {
 // Returns a random integer between min (included) and max (included)
 function getRandomInt(min, max) {
   var randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
-  console.log("randomInt("+min+","+max+")="+randomInt);
+  if(dice.debugLog) console.log("randomInt("+min+","+max+")="+randomInt);
   return randomInt;
 }

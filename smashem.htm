@@ -4,21 +4,24 @@
     <meta charset="UTF-8" />
     <title>Smash'em - do not show mercy.</title>
     <script src="https://unpkg.com/vue"></script>
+    <script src="js/dice/dice.js"></script>
     <style>
     </style>
   </head>
   <body>
     <div id="smashemApp">
-        <charactercard v-for="item in characterList" v-bind:character="item" :key="item.id" v-bind:onselectaction="handleselectaction">
+        <charactercard v-for="item in characterList" v-bind:character="item" :key="item.id" v-bind:onselectaction="handleselectaction"
+          v-bind:onselectcharacter="handleselectcharacter">
         </charactercard>
     </div>
     <script>
       Vue.component('charactercard',{
-        props: ['character','onselectaction'] ,
+        props: ['character','onselectaction','onselectcharacter'] ,
         template:
         '<div>'+
-          '<div style="float: left"><div className="NameLabel" >{{character.name}}</div>'+
+          '<div style="float: left" v-on:click="onselectcharacter(character)"><div className="NameLabel">{{character.name}}</div>'+
           '<img className="Avatar" :src="character.avatar" height="64" width="64"/></div>'+
+          '<div style="float: left"><div>&nbsp;</div><div>AC {{character.ac}}</div><div>HP {{character.hp}}/{{character.maxHp}} ({{character.rollHp}})</div></div>'+
           '<div style="float: left"><div>Actions</div>'+
           '<characteraction v-for="item in character.actionList" v-bind:action="item" v-bind:character="character" v-bind:onselectaction="onselectaction"></characteraction></div>'+
           '<div style="clear: left"></div>'+
@@ -34,21 +37,48 @@
           template: '<div><div v-on:click="onselectaction(character,action)">{{action.name}}</div></div>'
       })
 
-      var orcActionList = [{name: 'Greataxe'},{name: 'Javelin'}];
-      var expexterActionList = [{name: 'Attack'}];
+      var orcActionList = [{name: 'Greataxe', toHit: 5, hit: '1d12+3', critHit: '1d12'},{name: 'Javelin', toHit: 5, hit: '1d6+3', critHit: '1d12'}];
+      var expexterActionList = [{name: 'Attack', toHit: 9, hit: '1d8+9', critHit: '1d8'}];
       var SmashemApp = new Vue({
         el: '#smashemApp',
         data: {
+          selectedAction: null,
           characterList: [
-            { id: 1,name: 'Orc-1', avatar: 'pic/tuntematon.png',actionList: orcActionList},
-            { id: 2,name: 'Orc-2', avatar: 'pic/tuntematon.png',actionList: orcActionList},
-            { id: 3,name: 'Expexter', avatar: 'pic/platewarrior.png',actionList: expexterActionList}
+            { id: 1,name: 'Orc-1', avatar: 'pic/tuntematon.png',rollHp: '2d8+6',maxHp: null,hp: null,ac: 13,actionList: orcActionList},
+            { id: 2,name: 'Orc-2', avatar: 'pic/tuntematon.png',rollHp: '2d8+6',maxHp: null,hp: null,ac: 13,actionList: orcActionList},
+            { id: 3,name: 'Expexter', avatar: 'pic/platewarrior.png',rollHp: '45',maxHp: null,hp: null,ac: 22,actionList: expexterActionList}
           ]
         },
         methods: {
           handleselectaction: function(character,action){
             console.log(character.name+" is going to use "+action.name);
             character.name = character.name+'+';
+            this.selectedAction = action;
+          },
+          handleselectcharacter: function(character){
+            const action = this.selectedAction;
+            if(action!=null){
+              var logText = action.name+" is used against "+character.name;
+              const roll = dice.d20();
+              var modifiedRoll = roll+action.toHit;
+              var damage = 0;
+              if(roll==20){
+                damage += dice.roll(action.critHit);
+                logText = logText + " inflicting critical hit and";
+              }
+              if(roll!=1&&(modifiedRoll>=character.ac||roll==20)){
+                damage += dice.roll(action.hit);
+                logText = logText + " causing "+damage+" hp of damage."
+              } else {
+                logText = logText + " without a hit."
+              }
+              var rollLogText = "("+modifiedRoll+"="+roll+"(d20)+"+action.toHit+")";
+              logText = logText + rollLogText;
+              console.log(logText);
+              this.selectedAction==null;
+            } else {
+              console.log("selected "+character.name);
+            }
           }
         }
       })
