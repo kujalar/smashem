@@ -5,6 +5,7 @@
     <title>Smash'em - do not show mercy.</title>
     <script src="https://unpkg.com/vue"></script>
     <script src="js/dice/dice.js"></script>
+    <script src="js/barrack/barrack.js"></script>
     <style>
     </style>
   </head>
@@ -21,7 +22,7 @@
         '<div>'+
           '<div style="float: left" v-on:click="onselectcharacter(character)"><div className="NameLabel">{{character.name}}</div>'+
           '<img className="Avatar" :src="character.avatar" height="64" width="64"/></div>'+
-          '<div style="float: left"><div>&nbsp;</div><div>AC {{character.ac}}</div><div>HP {{character.hp}}/{{character.maxHp}} ({{character.rollHp}})</div></div>'+
+          '<div style="float: left"><div>&nbsp;</div><div>AC {{character.ac}}</div><div>HP {{character.hp}}/{{character.maxHp}}</div><div>({{character.rollHp}})</div></div>'+
           '<div style="float: left"><div>Actions</div>'+
           '<characteraction v-for="item in character.actionList" v-bind:action="item" v-bind:character="character" v-bind:onselectaction="onselectaction"></characteraction></div>'+
           '<div style="clear: left"></div>'+
@@ -37,16 +38,15 @@
           template: '<div><div v-on:click="onselectaction(character,action)">{{action.name}}</div></div>'
       })
 
-      var orcActionList = [{name: 'Greataxe', toHit: 5, hit: '1d12+3', critHit: '1d12'},{name: 'Javelin', toHit: 5, hit: '1d6+3', critHit: '1d12'}];
-      var expexterActionList = [{name: 'Attack', toHit: 9, hit: '1d8+9', critHit: '1d8'}];
+
       var SmashemApp = new Vue({
         el: '#smashemApp',
         data: {
           selectedAction: null,
           characterList: [
-            { id: 1,name: 'Orc-1', avatar: 'pic/tuntematon.png',rollHp: '2d8+6',maxHp: null,hp: null,ac: 13,actionList: orcActionList},
-            { id: 2,name: 'Orc-2', avatar: 'pic/tuntematon.png',rollHp: '2d8+6',maxHp: null,hp: null,ac: 13,actionList: orcActionList},
-            { id: 3,name: 'Expexter', avatar: 'pic/platewarrior.png',rollHp: '45',maxHp: null,hp: null,ac: 22,actionList: expexterActionList}
+            barrack.getOrc(),
+            barrack.getOrc(),
+            barrack.getExpexter()
           ]
         },
         methods: {
@@ -72,6 +72,7 @@
               } else {
                 logText = logText + " without a hit."
               }
+              applyDamage(character,damage);
               var rollLogText = "("+modifiedRoll+"="+roll+"(d20)+"+action.toHit+")";
               logText = logText + rollLogText;
               console.log(logText);
@@ -82,7 +83,10 @@
           }
         }
       })
-
+      function applyDamage(character, damage){
+        character.hp -= damage;
+        if(character.hp<0) character.hp = 0;
+      }
     </script>
   </body>
 </html>
