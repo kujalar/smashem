@@ -7,27 +7,65 @@
     <script src="js/dice/dice.js"></script>
     <script src="js/barrack/barrack.js"></script>
     <style>
+      .clickable {
+        padding: 1px;
+      }
+      .clickable:hover {
+        background-color: lightblue;
+      }
     </style>
   </head>
   <body>
     <div id="smashemApp">
-        <charactercard v-for="item in characterList" v-bind:character="item" :key="item.id" v-bind:onselectaction="handleselectaction"
+        <charactercard  v-for="item in characterList" v-bind:character="item" :key="item.id" v-bind:onselectaction="handleselectaction"
           v-bind:onselectcharacter="handleselectcharacter">
         </charactercard>
     </div>
     <script>
+    /*
+      var MyCharacterCard = Vue.extend(
+        {
+          props: ['character','onselectaction','onselectcharacter'] ,
+          data: function() {
+              return { styleObject: {
+                color: 'red',
+                float: 'left'
+              }};
+          },
+          template:
+          '<div id="blerp">'+
+            '<div :style="styleObject" class="clickable" v-on:click="onselectcharacter(character)"><div className="NameLabel">{{character.name}}</div>'+
+            '<img className="Avatar" :src="character.avatar" height="64" width="64"/></div>'+
+            '<div style="float: left"><div>&nbsp;</div><div>AC {{character.ac}}</div><div>HP {{character.hp}}/{{character.maxHp}}</div><div>({{character.rollHp}})</div></div>'+
+            '<div style="float: left"><div>Actions</div>'+
+            '<characteraction class="clickable" v-for="item in character.actionList" v-bind:action="item" v-bind:character="character" v-bind:onselectaction="onselectaction"></characteraction></div>'+
+            '<div style="clear: left"></div>'+
+          '</div>'
+        }
+      )
+      Vue.component('charactercard',MyCharacterCard);
+      */
       Vue.component('charactercard',{
         props: ['character','onselectaction','onselectcharacter'] ,
+        /*this must be like this, or it wont work within template*/
+        /*can be made different if using new operator*/
+        data: function() {
+            return { styleObject: {
+              color: 'red',
+              float: 'left'
+            }};
+        },
         template:
-        '<div>'+
-          '<div style="float: left" v-on:click="onselectcharacter(character)"><div className="NameLabel">{{character.name}}</div>'+
+        '<div id="blerp">'+
+          '<div :style="styleObject" class="clickable" v-on:click="onselectcharacter(character)"><div className="NameLabel">{{character.name}}</div>'+
           '<img className="Avatar" :src="character.avatar" height="64" width="64"/></div>'+
           '<div style="float: left"><div>&nbsp;</div><div>AC {{character.ac}}</div><div>HP {{character.hp}}/{{character.maxHp}}</div><div>({{character.rollHp}})</div></div>'+
           '<div style="float: left"><div>Actions</div>'+
-          '<characteraction v-for="item in character.actionList" v-bind:action="item" v-bind:character="character" v-bind:onselectaction="onselectaction"></characteraction></div>'+
+          '<characteraction class="clickable" v-for="item in character.actionList" v-bind:action="item" v-bind:character="character" v-bind:onselectaction="onselectaction"></characteraction></div>'+
           '<div style="clear: left"></div>'+
         '</div>'
-      })
+        }
+      )
       Vue.component('characteraction',{
           props: ['action','character','onselectaction'],
           methods: {
