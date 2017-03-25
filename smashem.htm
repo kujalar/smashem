@@ -17,47 +17,70 @@
   </head>
   <body>
     <div id="smashemApp">
-        <charactercard  v-for="item in characterList" v-bind:character="item" :key="item.id" v-bind:onselectaction="handleselectaction"
+        <charactercard  v-for="item in characterList" v-bind:character="item"
+          :key="item.id" v-bind:onselectaction="handleselectaction"
           v-bind:onselectcharacter="handleselectcharacter">
         </charactercard>
     </div>
     <script>
-    /*
-      var MyCharacterCard = Vue.extend(
-        {
-          props: ['character','onselectaction','onselectcharacter'] ,
-          data: function() {
-              return { styleObject: {
-                color: 'red',
-                float: 'left'
-              }};
-          },
-          template:
-          '<div id="blerp">'+
-            '<div :style="styleObject" class="clickable" v-on:click="onselectcharacter(character)"><div className="NameLabel">{{character.name}}</div>'+
-            '<img className="Avatar" :src="character.avatar" height="64" width="64"/></div>'+
-            '<div style="float: left"><div>&nbsp;</div><div>AC {{character.ac}}</div><div>HP {{character.hp}}/{{character.maxHp}}</div><div>({{character.rollHp}})</div></div>'+
-            '<div style="float: left"><div>Actions</div>'+
-            '<characteraction class="clickable" v-for="item in character.actionList" v-bind:action="item" v-bind:character="character" v-bind:onselectaction="onselectaction"></characteraction></div>'+
-            '<div style="clear: left"></div>'+
-          '</div>'
-        }
-      )
-      Vue.component('charactercard',MyCharacterCard);
-      */
       Vue.component('charactercard',{
         props: ['character','onselectaction','onselectcharacter'] ,
         /*this must be like this, or it wont work within template*/
         /*can be made different if using new operator*/
         data: function() {
-            return { styleObject: {
-              color: 'red',
-              float: 'left'
-            }};
+            return {
+              styleObject: {
+                color: 'red',
+                float: 'left'
+              },
+              messageStyle: {
+                backgroundColor: 'lightblue',
+                position: 'absolute',
+                border: '5px dashed blue',
+                display: 'inline'
+              },
+              shortMessage: 'Ready to rock!'
+
+          };
+        },
+        created: function() {
+          console.log('created function called for character!'+this.messageStyle.display);
+          setTimeout(this.hideMessage, 1000);
+        },
+        methods: {
+          hideMessage: function() {
+            console.log("hideMessage logitus");
+            this.messageStyle.display = 'none';
+          },
+          showMessage: function(message) {
+            if(message.text == null || message.text == ''){
+              return;
+            }
+            if(message.level=='warn'){
+              this.messageStyle.backgroundColor = 'yellow';
+              this.messageStyle.border = '5px dashed red';
+            } else if(message.level=='severe'){
+              this.messageStyle.backgroundColor = 'lightgrey';
+              this.messageStyle.border = '5px dashed black';
+            } else {
+              this.messageStyle.backgroundColor = 'lightblue';
+              this.messageStyle.border = '5px dashed blue';
+            }
+            this.shortMessage = message.text;
+            this.messageStyle.display = 'inline';
+            setTimeout(this.hideMessage, 2000);
+          },
+          handleSelectCharacter: function(character) {
+            var message = this.onselectcharacter(character);
+            this.showMessage(message);
+            console.log(message);
+
+          }
         },
         template:
         '<div id="blerp">'+
-          '<div :style="styleObject" class="clickable" v-on:click="onselectcharacter(character)"><div className="NameLabel">{{character.name}}</div>'+
+          '<div :style="messageStyle">{{shortMessage}}</div>'+
+          '<div :style="styleObject" class="clickable" v-on:click="handleSelectCharacter(character)"><div className="NameLabel">{{character.name}}</div>'+
           '<img className="Avatar" :src="character.avatar" height="64" width="64"/></div>'+
           '<div style="float: left"><div>&nbsp;</div><div>AC {{character.ac}}</div><div>HP {{character.hp}}/{{character.maxHp}}</div><div>({{character.rollHp}})</div></div>'+
           '<div style="float: left"><div>Actions</div>'+
@@ -90,11 +113,14 @@
         methods: {
           handleselectaction: function(character,action){
             console.log(character.name+" is going to use "+action.name);
-            character.name = character.name+'+';
             this.selectedAction = action;
           },
           handleselectcharacter: function(character){
             const action = this.selectedAction;
+            var message = {
+              text: null,
+              level: 'info'
+            }
             if(action!=null){
               var logText = action.name+" is used against "+character.name;
               const roll = dice.d20();
@@ -106,11 +132,14 @@
               }
               if(roll!=1&&(modifiedRoll>=character.ac||roll==20)){
                 damage += dice.roll(action.hit);
-                logText = logText + " causing "+damage+" hp of damage."
+                message = applyDamage(character,damage);
+                logText = logText + " causing "+damage+" hp of damage.";
               } else {
-                logText = logText + " without a hit."
+                logText = logText + " without a hit.";
+                message.text = 'Miss';
+                message.level = 'info';
               }
-              applyDamage(character,damage);
+
               var rollLogText = "("+modifiedRoll+"="+roll+"(d20)+"+action.toHit+")";
               logText = logText + rollLogText;
               console.log(logText);
@@ -118,12 +147,23 @@
             } else {
               console.log("selected "+character.name);
             }
+            return message;
           }
         }
       })
       function applyDamage(character, damage){
+        var message = {
+          text: damage.toString(),
+          level: 'warn'
+        };
+
         character.hp -= damage;
-        if(character.hp<0) character.hp = 0;
+        if(character.hp<0) {
+          character.hp = 0;
+          message.text = 'R.I.P.';
+          message.level = 'severe';
+        }
+        return message;
       }
     </script>
   </body>
