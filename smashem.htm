@@ -17,10 +17,14 @@
   </head>
   <body>
     <div id="smashemApp">
-        <charactercard  v-for="item in characterList" v-bind:character="item"
+
+      <div><h2>Turn {{turnCounter}}</h2></div>
+      <div><button style="position: relative; top: -20px;" v-on:click="nextTurn">Next turn</button></div>
+
+      <charactercard  v-for="item in characterList" v-bind:character="item"
           :key="item.id" v-bind:onselectaction="handleselectaction"
           v-bind:onselectcharacter="handleselectcharacter">
-        </charactercard>
+      </charactercard>
     </div>
     <script>
       Vue.component('charactercard',{
@@ -83,8 +87,8 @@
           '<div :style="styleObject" class="clickable" v-on:click="handleSelectCharacter(character)"><div className="NameLabel">{{character.name}}</div>'+
           '<img className="Avatar" :src="character.avatar" height="64" width="64"/></div>'+
           '<div style="float: left"><div>&nbsp;</div><div>AC {{character.ac}}</div><div>HP {{character.hp}}/{{character.maxHp}}</div><div>({{character.rollHp}})</div></div>'+
-          '<div style="float: left"><div>Actions</div>'+
-          '<characteraction class="clickable" v-for="item in character.actionList" v-bind:action="item" v-bind:character="character" v-bind:onselectaction="onselectaction"></characteraction></div>'+
+          '<div style="float: left"><div>Actions({{character.nOfAttacksLeft}})</div>'+
+          '<characteraction class="clickable" v-for="item in character.attackList" v-bind:action="item" v-bind:character="character" v-bind:onselectaction="onselectaction"></characteraction></div>'+
           '<div style="clear: left"></div>'+
         '</div>'
         }
@@ -103,7 +107,9 @@
       var SmashemApp = new Vue({
         el: '#smashemApp',
         data: {
-          selectedAction: null,
+          selectedAction: null,/*valittu toiminto joka aiotaan tehda*/
+          actionSubject: null,/*hahmo joka aikoo tehda valitun toiminnon*/
+          turnCounter: 1,
           characterList: [
             barrack.getOrc(),
             barrack.getOrc(),
@@ -111,9 +117,15 @@
           ]
         },
         methods: {
+          nextTurn: function(){
+            this.turnCounter++;
+            //palautetaan toiminnot hahmoille
+            this.characterList.forEach(resetActions);
+          },
           handleselectaction: function(character,action){
             console.log(character.name+" is going to use "+action.name);
             this.selectedAction = action;
+            this.actionSubject = character;
           },
           handleselectcharacter: function(character){
             const action = this.selectedAction;
@@ -121,8 +133,12 @@
               text: null,
               level: 'info'
             }
-            if(action!=null){
+            if(action!=null && this.actionSubject.nOfAttacksLeft>0){
               var logText = action.name+" is used against "+character.name;
+
+              /*koska action on attack, vahennetaan attackseja*/
+              this.actionSubject.nOfAttacksLeft--;
+
               const roll = dice.d20();
               var modifiedRoll = roll+action.toHit;
               var damage = 0;
@@ -151,6 +167,9 @@
           }
         }
       })
+      function resetActions(monster) {
+          monster.nOfAttacksLeft = monster.nOfAttacks;
+      }
       function applyDamage(character, damage){
         var message = {
           text: damage.toString(),
@@ -158,7 +177,7 @@
         };
 
         character.hp -= damage;
-        if(character.hp<0) {
+        if(character.hp<=0) {
           character.hp = 0;
           message.text = 'R.I.P.';
           message.level = 'severe';
