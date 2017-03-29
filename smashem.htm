@@ -100,7 +100,17 @@
               console.log(characterName+" doing action "+actionName);
             }
           },
-          template: '<div><div v-on:click="onselectaction(character,action)">{{action.name}}</div></div>'
+
+          computed: {
+            styleObject: function() {
+              if(typeof this.action.selected != 'undefined' && this.action.selected == true ){
+                return { backgroundColor: 'lightblue',fontWeight: 'bold' };
+              } else {
+                return { backgroundColor: 'transparent' };
+              }
+            }
+          },
+          template: '<div><div :style="styleObject" v-on:click="onselectaction(character,action)">{{action.name}}</div></div>'
       })
 
 
@@ -125,7 +135,11 @@
           },
           handleselectaction: function(character,action){
             console.log(character.name+" is going to use "+action.name);
+            if(this.selectedAction!=null) {
+              this.selectedAction.selected=false;
+            }
             this.selectedAction = action;
+            this.selectedAction.selected=true;
             this.actionSubject = character;
           },
           handleselectcharacter: function(character){
